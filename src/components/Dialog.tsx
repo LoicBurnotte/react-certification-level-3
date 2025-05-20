@@ -1,8 +1,9 @@
-import type { PropsWithChildren } from 'react';
+import { cn } from "@/lib/utils";
+import type { PropsWithChildren } from "react";
 
 interface IProps extends PropsWithChildren {
+  closeOnClickingOutside?: boolean;
   open?: boolean;
-  allowOverlayAction?: boolean;
   blur?: boolean;
   hideCloseButton?: boolean;
   header?: React.ReactNode;
@@ -11,7 +12,7 @@ interface IProps extends PropsWithChildren {
 }
 
 const Dialog = ({
-  allowOverlayAction,
+  closeOnClickingOutside,
   blur,
   open,
   header,
@@ -22,20 +23,18 @@ const Dialog = ({
 }: IProps) => {
   if (!open) return null;
 
-  const handleOverlayClick = () => {
-    allowOverlayAction && onClose();
-  };
-
   const handleContentClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
 
   return (
     <div
-      className={`${
-        blur ? 'backdrop-blur-sm pointer-events-auto' : 'pointer-events-none'
-      } absolute top-0 left-0 z-2 w-full h-full p-4 flex justify-center items-center `}
-      onClick={handleOverlayClick}
+      className={cn(
+        blur ? "backdrop-blur-sm pointer-events-auto" : "pointer-events-none",
+        !blur && closeOnClickingOutside && "pointer-events-auto",
+        "absolute top-0 left-0 z-2 w-full h-full p-4 flex justify-center items-center"
+      )}
+      onClick={() => closeOnClickingOutside && onClose()}
     >
       <div
         id="modal"

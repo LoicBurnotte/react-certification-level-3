@@ -17,7 +17,6 @@ const Exercise2 = () => {
         <Dialog
           open={openModal}
           onClose={() => setOpenModal(false)}
-          // allowOverlayAction
           header="Modal title"
           footer={
             <div className="w-full flex border-t-2 pt-3 justify-end gap-2">
@@ -76,8 +75,8 @@ const Exercise2 = () => {
           Open default dialog
         </button>
         <Dialog
-          // allowOverlayAction
           // blur
+          closeOnClickingOutside
           open={openDefaultDialog}
           onClose={() => setOpenDefaultDialog(false)}
         >

@@ -40,14 +40,8 @@ interface Country {
   states: State[];
 }
 
-// const options: DropdownItem[] = [
-//   { id: '1', name: 'Alice Johnson' },
-//   { id: '2', name: 'Bob Smith' },
-//   { id: '3', name: 'Charlie Brown' },
-// ];
-
 const Exercise3 = () => {
-  const [list, setList] = useState<User[]>();
+  const [userList, setUserList] = useState<User[]>();
   const [userSelection, setUserSelection] = useState<
     Omit<User, "id"> & DropdownItem
   >();
@@ -62,18 +56,18 @@ const Exercise3 = () => {
 
   /* Add a default user in the selection */
   useEffect(() => {
-    if (!list) return;
+    if (!userList) return;
 
-    const selectedUser = list.find((i) => i.name.includes("Ervin"));
+    const selectedUser = userList.find((i) => i.name.includes("Ervin"));
     if (!selectedUser) return;
 
     setUserSelection({ ...selectedUser, id: selectedUser.id.toString() });
-  }, [list]);
+  }, [userList]);
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
       .then((res) => res.json())
-      .then((result) => setList(result))
+      .then((result: User[]) => setUserList(result))
       .catch((err) => console.error("Error loading users:", err));
 
     fetch("src/assets/countries.json")
@@ -86,14 +80,17 @@ const Exercise3 = () => {
     <>
       <h1 className="title">Exercise 3</h1>
       <h3 className="mb-2 font-bold text-xl">
-        Select a user [{list?.length}] :
+        Select a user [{userList?.length}] :{" "}
+        <span className="italic text-indigo-500 dark:text-rose-500">
+          {userSelection?.name}
+        </span>
       </h3>
       <div className="description">
         Allow you to select a <b>user name</b> and filter by <b>name</b>:
       </div>
       <Dropdown<Omit<User, "id"> & DropdownItem>
         list={
-          list?.map((i) => ({
+          userList?.map((i) => ({
             ...i,
             id: i.id.toString(),
           })) || []
@@ -107,7 +104,10 @@ const Exercise3 = () => {
       <hr className="my-4" />
 
       <h3 className="mb-2 font-bold text-xl">
-        Select a company [{list?.length}] :
+        Select a company [{userList?.length}] :{" "}
+        <span className="italic text-indigo-500 dark:text-rose-500">
+          {companySelection?.company.name}
+        </span>
       </h3>
       <div className="description">
         Allow you to select a <b>company name</b> (with the username in '[]')
@@ -115,7 +115,7 @@ const Exercise3 = () => {
       </div>
       <Dropdown<CustomUser>
         list={
-          list?.map((i) => ({
+          userList?.map((i) => ({
             ...i,
             id: i.id.toString(),
             companyName: `${i.company.name} [${i.username}]`,
@@ -130,7 +130,10 @@ const Exercise3 = () => {
       <hr className="my-4" />
 
       <h3 className="mb-2 font-bold text-xl">
-        Select multiple countries [{countries?.length}] :
+        Select multiple countries [{countries?.length}] :{" "}
+        <span className="italic text-indigo-500 dark:text-rose-500">
+          {countryMultipleSelection?.map((c) => c.name)?.join(", ")}
+        </span>
       </h3>
       <div className="description">
         Allow you to select multiple <b>country names</b> and filter by{" "}
@@ -149,7 +152,10 @@ const Exercise3 = () => {
       <hr className="my-4" />
 
       <h3 className="mb-2 font-bold text-xl">
-        Select a country [{countries?.length}] :
+        Select a country [{countries?.length}] :{" "}
+        <span className="italic text-indigo-500 dark:text-rose-500">
+          {countrySelection?.name}
+        </span>
       </h3>
       <div className="description">
         Allow you to select a <b>country name</b> and filter by <b>name</b>:
@@ -171,7 +177,12 @@ const Exercise3 = () => {
               countries.find((c) => c.code2 === countrySelection.code2)?.states
                 ?.length
             }
-            ] :
+            ] :{" "}
+            <span className="italic text-indigo-500 dark:text-rose-500">{`Country "${
+              countrySelection.name
+            } ${
+              stateSelection ? `- State "${stateSelection.name}"` : ""
+            }`}</span>
           </h3>
           <div className="description">
             Allow you to select a <b>state name</b> and filter by <b>name</b>:
