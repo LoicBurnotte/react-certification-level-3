@@ -1,44 +1,8 @@
 import { useEffect, useState } from "react";
+import type { Country, State, User } from "@/models/common.model";
 import Dropdown, { type DropdownItem } from "@/components/Dropdown";
 
-interface Address {
-  city: string;
-  geo: { lat: string; lng: string };
-  street: string;
-  suite: string;
-  zipCode: string;
-}
-interface Company {
-  bs: string;
-  catchPhrase: string;
-  name: string;
-}
-interface User {
-  id: number;
-  name: string;
-  address: Address;
-  company: Company;
-  email: string;
-  phone: string;
-  username: string;
-  website: string;
-}
 type CustomUser = Omit<User, "id"> & DropdownItem & { companyName: string };
-
-interface State {
-  code: string;
-  name: string;
-  subdivision: string | null;
-}
-interface Country {
-  code2: string;
-  code3: string;
-  name: string;
-  capital: string;
-  region: string;
-  subregion: string;
-  states: State[];
-}
 
 const Exercise3 = () => {
   const [userList, setUserList] = useState<User[]>();
