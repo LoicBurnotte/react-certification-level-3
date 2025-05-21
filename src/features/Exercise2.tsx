@@ -70,7 +70,7 @@ const Exercise2 = () => {
           footer&nbsp;&nbsp;&nbsp;
         </Dialog>
 
-        {/* Default Dialog component */}
+        {/* Default Dialog component with closeOnClickingOutside property */}
         <button className="btn" onClick={() => setOpenDefaultDialog(true)}>
           Open default dialog
         </button>

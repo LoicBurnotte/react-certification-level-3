@@ -2,23 +2,23 @@ import { cn } from "@/lib/utils";
 import type { PropsWithChildren } from "react";
 
 interface IProps extends PropsWithChildren {
-  closeOnClickingOutside?: boolean;
-  open?: boolean;
   blur?: boolean;
-  hideCloseButton?: boolean;
-  header?: React.ReactNode;
+  closeOnClickingOutside?: boolean;
   footer?: React.ReactNode;
+  header?: React.ReactNode;
+  hideCloseButton?: boolean;
+  open?: boolean;
   onClose: () => void;
 }
 
 const Dialog = ({
-  closeOnClickingOutside,
   blur,
-  open,
+  children,
+  closeOnClickingOutside,
+  footer,
   header,
   hideCloseButton,
-  children,
-  footer,
+  open,
   onClose,
 }: IProps) => {
   if (!open) return null;

@@ -1,40 +1,28 @@
-import { cn, HighlightedOption } from '@/lib/utils';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { cn } from "@/lib/utils";
+import HighlightedOption from "./HighlightedOption";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export type DropdownItem = { id: string };
-
-// interface IProps<T extends DropdownItem> {
-//   className?: string;
-//   list: T[];
-//   itemKey: keyof T;
-//   filterBy?: (keyof T)[];
-//   placeholder?: string;
-//   noDataPlaceholder?: string;
-//   selection?: T;
-//   multipe?: boolean
-//   onSelect: (selected?: T) => void;
-//   valueChange: (filteredItems: T[]) => void;
-// }
 
 interface IPropsSingle<T extends DropdownItem> {
   multiple?: false;
   selection?: T;
-  valueChange: (selected?: T) => void;
+  valueChange: (value?: T) => void;
 }
 
 interface IPropsMulti<T extends DropdownItem> {
   multiple: true;
   selection?: T[];
-  valueChange: (filteredItems?: T[]) => void;
+  valueChange: (values?: T[]) => void;
 }
 
 type ICommonProps<T extends DropdownItem> = {
   className?: string;
-  list: T[];
-  itemKey: keyof T;
   filterBy?: (keyof T)[];
-  placeholder?: string;
+  itemKey: keyof T;
+  list: T[];
   noDataPlaceholder?: string;
+  placeholder?: string;
 };
 
 type IProps<T extends DropdownItem> = ICommonProps<T> &
@@ -42,47 +30,28 @@ type IProps<T extends DropdownItem> = ICommonProps<T> &
 
 const Dropdown = <T extends DropdownItem>({
   className,
-  list,
-  placeholder = 'Search...',
-  itemKey,
   filterBy,
-  selection,
-  noDataPlaceholder = 'No results',
+  itemKey,
+  list,
   multiple,
+  noDataPlaceholder = "No results",
+  placeholder = "Search...",
+  selection,
   valueChange,
 }: IProps<T>) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   const [openDropdown, setOpenDropdown] = useState(false);
-  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>("");
   const [debouncedQuery, setDebouncedQuery] = useState<string>();
 
-  const selectDescription = useMemo(() => {
-    if (!multiple || !selection?.length) return '';
+  const multipleSelectDescription = useMemo(() => {
+    if (!multiple || !selection?.length) return "";
 
     return selection.length === 1
       ? `${selection.length} selected item`
       : `${selection.length} selected items`;
-  }, [selection]);
-
-  useEffect(() => {
-    if (!selection || multiple) return;
-
-    setSearchValue(String(selection[itemKey] || ''));
-  }, [selection, multiple]);
-
-  // Debounce
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedQuery(searchValue);
-    }, 200); // delay in ms
-
-    if (!searchValue.length && !multiple) valueChange(undefined);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchValue, multiple]);
+  }, [multiple, selection]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -90,19 +59,38 @@ const Dropdown = <T extends DropdownItem>({
         wrapperRef.current &&
         !wrapperRef.current.contains(event.target as Node)
       ) {
-        setOpenDropdown(false); // Close the dropdown
+        setOpenDropdown(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    if (!selection || multiple) return;
+
+    setSearchValue(String(selection[itemKey] || ""));
+  }, [selection, multiple, itemKey]);
+
+  useEffect(() => {
+    // Debounce
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchValue);
+    }, 200); // delay in ms
+
+    if (!searchValue.length && !multiple) valueChange(undefined);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchValue, multiple, valueChange]);
 
   const filteredList: T[] = useMemo(() => {
     if (!debouncedQuery) return list;
 
+    /* FILTER ON MULTIPLE KEYS */
     const filteredList = list.filter((item) => {
       const keysToFilter = filterBy?.length ? filterBy : [itemKey];
 
@@ -123,7 +111,7 @@ const Dropdown = <T extends DropdownItem>({
     //     .includes(debouncedQuery.toLowerCase())
     // );
     return filteredList;
-  }, [list, debouncedQuery]);
+  }, [debouncedQuery, list, filterBy, itemKey]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOpenDropdown(!!e.target.value);
@@ -135,17 +123,17 @@ const Dropdown = <T extends DropdownItem>({
 
     setOpenDropdown(false);
     valueChange(item);
-    setSearchValue(item[itemKey] ? String(item[itemKey]) : '');
+    setSearchValue(item[itemKey] ? String(item[itemKey]) : "");
   };
 
-  const handleMultipeSelect = (item: T) => {
+  const handleMultipleSelect = (item: T) => {
     if (!multiple) return;
 
     let updatedItems = [...(selection || [])];
     if (selection?.some((i) => i.id === item.id)) {
       updatedItems = selection.filter((s) => s.id !== item.id);
     } else {
-      updatedItems = [...(selection || []), item];
+      updatedItems = [...updatedItems, item];
     }
     valueChange(updatedItems);
   };
@@ -153,13 +141,13 @@ const Dropdown = <T extends DropdownItem>({
   const handleReset = () => {
     valueChange(undefined);
     setDebouncedQuery(undefined);
-    setSearchValue('');
+    setSearchValue("");
     setOpenDropdown(false);
   };
 
   return (
     <div className="flex flex-row gap-4">
-      <div className={cn('w-64 relative', className)} ref={wrapperRef}>
+      <div className={cn("w-64 relative", className)} ref={wrapperRef}>
         <input
           type="text"
           className="relative w-64 border-2 border-solid rounded-sm px-2 py-1"
@@ -187,17 +175,17 @@ const Dropdown = <T extends DropdownItem>({
                   role="select"
                   key={item.id}
                   onClick={() =>
-                    multiple ? handleMultipeSelect(item) : handleSelect(item)
+                    multiple ? handleMultipleSelect(item) : handleSelect(item)
                   }
                   className={cn(
-                    'w-inherit bg-gray-200 dark:bg-gray-700 cursor-pointer hover:text-indigo-500 dark:hover:text-rose-500 p-1',
+                    "w-inherit bg-gray-200 dark:bg-gray-700 cursor-pointer hover:text-indigo-500 dark:hover:text-rose-500 p-1",
                     multiple && selection?.find((i) => i.id === item.id)
-                      ? 'text-indigo-500 bg-gray-100 dark:text-rose-500 dark:bg-gray-600 font-semibold '
-                      : ''
+                      ? "text-indigo-500 bg-gray-100 dark:text-rose-500 dark:bg-gray-600 font-semibold "
+                      : ""
                   )}
                 >
                   <HighlightedOption
-                    name={item[itemKey]?.toString() || ''}
+                    name={item[itemKey]?.toString() || ""}
                     query={debouncedQuery}
                   />
                 </div>
@@ -212,10 +200,7 @@ const Dropdown = <T extends DropdownItem>({
               )}
         </div>
       </div>
-      <div className="description mt-2">
-        {/* {!multiple && selection?.[itemKey]?.toString()}&nbsp; */}
-        {selectDescription}
-      </div>
+      <div className="description mt-2">{multipleSelectDescription}</div>
     </div>
   );
 };

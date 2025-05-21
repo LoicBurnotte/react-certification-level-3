@@ -110,8 +110,8 @@ const Exercise3 = () => {
         </span>
       </h3>
       <div className="description">
-        Allow you to select a <b>company name</b> (with the username in '[]')
-        and filter on the <b>company name</b> AND the <b>name</b>:
+        Allow you to select a <b>company name</b> (with the <b>username</b> in
+        '[]') and filter on the <b>company name</b> AND the <b>name</b>:
       </div>
       <Dropdown<CustomUser>
         list={
