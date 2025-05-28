@@ -171,24 +171,32 @@ const Dropdown = <T extends DropdownItem>({
         <div className="absolute z-2 w-full max-h-60 overflow-auto mb-2 rounded-sm mt-1 shadow-md">
           {openDropdown && filteredList.length > 0
             ? filteredList.map((item) => (
-                <div
-                  role="select"
-                  key={item.id}
-                  onClick={() =>
-                    multiple ? handleMultipleSelect(item) : handleSelect(item)
-                  }
-                  className={cn(
-                    "w-inherit bg-gray-200 dark:bg-gray-700 cursor-pointer hover:text-indigo-500 dark:hover:text-rose-500 p-1",
-                    multiple && selection?.find((i) => i.id === item.id)
-                      ? "text-indigo-500 bg-gray-100 dark:text-rose-500 dark:bg-gray-600 font-semibold "
-                      : ""
+                <>
+                  {typeof item[itemKey] === "string" ? (
+                    <div
+                      role="select"
+                      key={item.id}
+                      onClick={() =>
+                        multiple
+                          ? handleMultipleSelect(item)
+                          : handleSelect(item)
+                      }
+                      className={cn(
+                        "w-inherit bg-gray-200 dark:bg-gray-700 cursor-pointer hover:text-indigo-500 dark:hover:text-rose-500 p-1",
+                        multiple && selection?.find((i) => i.id === item.id)
+                          ? "text-indigo-500 bg-gray-100 dark:text-rose-500 dark:bg-gray-600 font-semibold "
+                          : ""
+                      )}
+                    >
+                      <HighlightedOption
+                        name={item[itemKey]}
+                        query={debouncedQuery}
+                      />
+                    </div>
+                  ) : (
+                    item[itemKey]
                   )}
-                >
-                  <HighlightedOption
-                    name={item[itemKey]?.toString() || ""}
-                    query={debouncedQuery}
-                  />
-                </div>
+                </>
               ))
             : openDropdown && (
                 <option

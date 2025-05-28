@@ -20,9 +20,7 @@ function useLocalStorage({
   key,
   defaultValue,
 }: IUseLocalStorageProps): IUseLocalStorageReturnProps {
-  const [value, setValueState] = useState(() => {
-    return getLocalStorage(key, defaultValue);
-  });
+  const [value, setValueState] = useState(() => getLocalStorage(key, defaultValue));
 
   const setValue = (val?: string) => {
     if (!val) {
@@ -43,12 +41,11 @@ function useLocalStorage({
     };
 
     localStorageBus.addEventListener(key, onChange);
-    window.addEventListener('storage', () => {
-      setValueState(getLocalStorage(key, defaultValue));
-    });
-
+    // window.addEventListener('storage', () => setValueState(getLocalStorage(key, defaultValue)));
+    
     return () => {
       localStorageBus.removeEventListener(key, onChange);
+      // window.removeEventListener('storage', () => setValueState(getLocalStorage(key, defaultValue)));
     };
   }, [key, defaultValue]);
 
