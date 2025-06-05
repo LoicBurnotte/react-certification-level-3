@@ -172,7 +172,6 @@ const Dropdown = <T extends DropdownItem>({
           {openDropdown && filteredList.length > 0
             ? filteredList.map((item) => (
                 <>
-                  {/* how can I check if the type equals to React.ReactNode ?  */}
                   {typeof item[itemKey] === "string" ||
                   typeof item[itemKey] === "number" ? (
                     <div

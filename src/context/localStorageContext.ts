@@ -1,9 +1,9 @@
 import { createContext, useContext } from "react";
 
 export const LocalStorageContext = createContext<{
-  value: string | null;
+  value: string | undefined;
   updateValue: (newValue?: string) => void;
-}>({ value: null, updateValue: () => {} });
+}>({ value: undefined, updateValue: () => {} });
 
 export function useLocaleStorageTest() {
   return useContext(LocalStorageContext);
