@@ -172,7 +172,9 @@ const Dropdown = <T extends DropdownItem>({
           {openDropdown && filteredList.length > 0
             ? filteredList.map((item) => (
                 <>
-                  {typeof item[itemKey] === "string" ? (
+                  {/* how can I check if the type equals to React.ReactNode ?  */}
+                  {typeof item[itemKey] === "string" ||
+                  typeof item[itemKey] === "number" ? (
                     <div
                       role="select"
                       key={item.id}
@@ -189,7 +191,7 @@ const Dropdown = <T extends DropdownItem>({
                       )}
                     >
                       <HighlightedOption
-                        name={item[itemKey]}
+                        name={item[itemKey]?.toString()}
                         query={debouncedQuery}
                       />
                     </div>
